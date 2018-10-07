@@ -1,9 +1,21 @@
+from model.json_object import JsonObject
 import json
 
-class User(object):	
-	def __init__(self, username, password):
+class User(JsonObject):	
+	def __init__(self, username, password, email="", tasks=[]):
 		self.username = username
 		self.password = password
+		self.email = email
+		self.tasks = tasks
 
-	def to_json(self):
-		return json.dumps(self, default=lambda o: o.__dict__, sort_keys=True, indent=2)
+	def add_task(self, task_id):
+		self.tasks.append(task_id)
+
+	@classmethod
+	def from_json(cls, json_str):
+		data = json.loads(json_str)
+		
+		return cls(data["username"], 
+					data["password"], 
+					data.get("email", ""), 
+					data.get("tasks", []))
