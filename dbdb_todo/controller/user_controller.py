@@ -71,7 +71,7 @@ class UserController(object):
             return Response(data, 200)
 
         except KeyError as err:
-            return Response("{ 'msg': '" + err + "'}", status=404)
+            return Response("{ 'msg': '" + str(err) + "'}", status=404)
 
     def get_tasks(self, request):
         try:
