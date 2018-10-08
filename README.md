@@ -1,5 +1,7 @@
 # Dog Bed DB TODO
 
+![travis-ci-build](https://travis-ci.com/Guillem96/dog-bed-db-server.svg?branch=master)
+
 Simple example app to organize your every day tasks using Dob Bed db database from aosabook 500 lines or less.
 
 ## Install dependencies
