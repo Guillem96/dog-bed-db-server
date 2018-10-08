@@ -28,6 +28,11 @@ def create_app(test_config=None):
 	def get_pw(username):
 		return user_ctrl.get_password(username)
 
+
+	@app.route('/')
+	def home():
+		return "<h1>Hello world!</h1>"
+
 	@app.route("/login", methods=["POST"])
 	def login():
 		return user_ctrl.login(request)
@@ -56,3 +61,5 @@ def create_app(test_config=None):
 		return user_ctrl.delete_task(request, index)
 
 	return app
+
+app = create_app()

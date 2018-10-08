@@ -1,1 +1,1 @@
-web: gunicorn dbdb_todo:create_app
+web: gunicorn dbdb_todo:app
