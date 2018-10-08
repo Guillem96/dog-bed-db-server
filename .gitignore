@@ -1,7 +1,18 @@
+# Visual Studio Code
 .vscode/
 
+# Virtual environment
 venv/
 
+# Python
+build/
+dist/
 *.pyc
+*.egg-info
 
+# Database files
 *.db
+
+# PyTest
+.pytest_cache/
+__pycache__/

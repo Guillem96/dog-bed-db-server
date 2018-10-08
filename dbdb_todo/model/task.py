@@ -1,4 +1,4 @@
-from model.json_object import JsonObject
+from dbdb_todo.model.json_object import JsonObject
 import json
 import hashlib
 

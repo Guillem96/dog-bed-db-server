@@ -1,4 +1,4 @@
-from model.json_object import JsonObject
+from dbdb_todo.model.json_object import JsonObject
 import json
 
 class User(JsonObject):	
@@ -8,8 +8,11 @@ class User(JsonObject):
 		self.email = email
 		self.tasks = tasks
 
-	def add_task(self, task_id):
-		self.tasks.append(task_id)
+	def add_task(self, task):
+		self.tasks.append(task)
+
+	def delete_task(self, task_idx):
+		del self.tasks[task_idx]
 
 	@classmethod
 	def from_json(cls, json_str):
