@@ -30,3 +30,4 @@ six==1.11.0
 Werkzeug==0.14.1
 wrapt==1.10.11
 gunicorn==19.7.1
+flask-cors==3.0.6

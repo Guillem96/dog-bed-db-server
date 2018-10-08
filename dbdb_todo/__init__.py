@@ -1,5 +1,6 @@
 from flask import Flask, request, Response
 from flask_httpauth import HTTPBasicAuth
+from flask_cors import CORS
 
 import dbdb
 import json
@@ -63,3 +64,4 @@ def create_app(test_config=None):
 	return app
 
 app = create_app()
+CORS(app)
