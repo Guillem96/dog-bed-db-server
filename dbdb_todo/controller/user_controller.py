@@ -31,7 +31,7 @@ class UserController(object):
                 return Response(self.database[new_user.username], status=201)
             except KeyError:
                 return Response(status=400)
-            except UnicodeDecodeError | ValueError:
+            except (UnicodeDecodeError, ValueError):
                 return Response('{ "msg": "Json body is incorrect" }', status=400)
 
         return Response('{ "msg": "Json body is required" }', status=400)
@@ -70,8 +70,8 @@ class UserController(object):
             data = json.dumps(data)
             return Response(data, 200)
 
-        except KeyError:
-            return Response(status=404)
+        except KeyError as err:
+            return Response("{ 'msg': '" + err + "'}", status=404)
 
     def get_tasks(self, request):
         try:
