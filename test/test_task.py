@@ -4,13 +4,15 @@ import json
 new_task = dict(
     name="Flask server",
     description="End up with flask backend using dbdb",
-    date_limit="15/10/2018"
+    date_limit="15/10/2018",
+    tags=["University"]
 )
 
 another_task = dict(
     name="Flask client",
     description="End up with flask backend using dbdb",
-    date_limit="15/10/2018"
+    date_limit="15/10/2018",
+    tags=["University"]
 )
 
 
@@ -19,16 +21,13 @@ def test_add_task(auth, task_manager):
                        "pw", "guillem@email.com")
     assert res.status_code == 201
 
-    new_task = dict(
-        name="Flask server",
-        description="End up with flask backend using dbdb",
-        date_limit="15/10/2018"
-    )
     res = task_manager.add_task("guillem", "pw", new_task)
     assert res.status_code == 201
 
     res_data = json.loads(res.data)
     assert len(res_data["tasks"]) == 1
+    assert len(res_data["tasks"][0]["tags"]) == 1
+    assert res_data["tasks"][0]["tags"][0] == "University"
     assert res_data["tasks"][0]["name"] == "Flask server"
 
 
@@ -37,11 +36,6 @@ def test_add_task_wo_auth(auth, task_manager):
                        "pw", "guillem@email.com")
     assert res.status_code == 201
 
-    new_task = dict(
-        name="Flask server",
-        description="End up with flask backend using dbdb",
-        date_limit="15/10/2018"
-    )
     res = task_manager.add_task("guillem", "bad_pass", new_task)
     assert res.status_code == 401
 

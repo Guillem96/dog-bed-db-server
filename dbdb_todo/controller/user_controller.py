@@ -29,7 +29,6 @@ class UserController(object):
                                 body.get("email", ""))
                 self.database[new_user.username] = new_user.to_json()
                 self.database.commit()
-                print new_user.to_json()
                 return Response(new_user.to_json(), status=201)
             except KeyError:
                 return Response('{ "msg": "Missing properties" }', status=400)
@@ -79,7 +78,11 @@ class UserController(object):
         username = request.authorization.get("username")
         if request.data:
             try:
-                return Response(self._add_task(username, json.loads(request.data)).to_json(), 201)
+                task = json.loads(request.data)
+                if not isinstance(task["tags"], list):
+                    return Response("{ 'msg': 'tags must be an array'}", status=400)
+
+                return Response(self._add_task(username, task).to_json(), status=201)
             except KeyError:
                 return Response('{ "msg": "Properties missing" }', status=400)
             except UnicodeDecodeError:
@@ -110,7 +113,8 @@ class UserController(object):
             return Response('{ "msg": "User not found" }', status=400)
 
     def _add_task(self, username, task, index=-1):
-        new_task = Task(task["name"], task["description"], task["date_limit"])
+        new_task = Task(task["name"], task["description"],
+                        task["date_limit"], task["tags"])
         user = User.from_json(self.database[username])
         if index < 0:
             user.add_task(new_task)

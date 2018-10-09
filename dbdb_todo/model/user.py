@@ -1,4 +1,6 @@
 from dbdb_todo.model.json_object import JsonObject
+from dbdb_todo.model.task import Task
+
 import json
 
 
@@ -20,10 +22,10 @@ class User(JsonObject):
     @classmethod
     def from_json(cls, json_str):
         data = json.loads(json_str)
-
+        tasks = [Task.from_json(json.dumps(t)) for t in data.get("tasks", [])]
         return cls(data["first_name"],
                    data["last_name"],
                    data["username"],
                    data["password"],
                    data.get("email", ""),
-                   data.get("tasks", []))
+                   tasks)
