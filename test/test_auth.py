@@ -37,7 +37,7 @@ def test_login(auth):
 
     # Forbidden
     res = auth.login("guillem", "incorrect")
-    assert res.status_code == 403
+    assert res.status_code == 401
 
     # Get the identity
     res = auth.identity("guillem", "pw")
@@ -47,4 +47,4 @@ def test_login(auth):
 
     # Non existent user identity
     res = auth.identity("non_existent", "pw")
-    assert res.status_code == 404
+    assert res.status_code == 401

@@ -6,7 +6,11 @@ import dbdb
 import json
 import os
 
+from router.task_router import TaskRouter
+from router.user_router import UserRouter
+
 from controller.user_controller import UserController
+from controller.task_controller import TaskController
 
 
 def init_db(app):
@@ -15,7 +19,6 @@ def init_db(app):
 
 
 def create_app(test_config=None):
-    # create and configure the app
     app = Flask(__name__)
     auth = HTTPBasicAuth()
     app.config.from_mapping(DATABASE='database.db')
@@ -25,41 +28,10 @@ def create_app(test_config=None):
 
     db = init_db(app)
     user_ctrl = UserController(db)
+    task_ctrl = TaskController(db, user_ctrl)
 
-    @auth.get_password
-    def get_pw(username):
-        return user_ctrl.get_password(username)
-
-    @app.route('/')
-    def home():
-        return "<h1>Hello world!</h1>"
-
-    @app.route("/login", methods=["POST"])
-    def login():
-        return user_ctrl.login(request)
-
-    @app.route("/sign-up", methods=["POST"])
-    def sign_up():
-        return user_ctrl.store(request)
-
-    @app.route("/identity", methods=["GET"])
-    def get_user_info():
-        return user_ctrl.get(request)
-
-    @app.route("/tasks/<int:index>", methods=["PUT"])
-    @auth.login_required
-    def get_user_taks(index):
-        return user_ctrl.update_task(request, index)
-
-    @app.route("/tasks", methods=["POST"])
-    @auth.login_required
-    def add_user_taks():
-        return user_ctrl.add_task(request)
-
-    @app.route("/tasks/<int:index>", methods=["DELETE"])
-    @auth.login_required
-    def delete_user_taks(index):
-        return user_ctrl.delete_task(request, index)
+    app = UserRouter.router(user_ctrl, app, auth)
+    app = TaskRouter.router(task_ctrl, app, auth)
 
     return app
 

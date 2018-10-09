@@ -34,11 +34,8 @@ class AuthActions(object):
         self._client = client
 
     def login(self, username, password):
-        data = dict(
-            username=username,
-            password=password
-        )
-        return self._client.post("/login", data=json.dumps(data), headers=AuthActions.headers)
+        headers = self.get_basic_auth(username, password)
+        return self._client.post("/login", data="{}", headers=headers)
 
     def sign_up(self, first_name, last_name, username, password, email):
         data = dict(
