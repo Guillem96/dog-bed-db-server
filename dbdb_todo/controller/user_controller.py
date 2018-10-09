@@ -101,7 +101,6 @@ class UserController(object):
         if not username:
             return Response(status=403)
         try:
-            user = self._delete_task(username, index)
             user = self._add_task(username, json.loads(request.data), index)
             if not user:
                 return Response("{ 'msg': 'Invalid index' }", 400)
