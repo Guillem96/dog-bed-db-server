@@ -1,1 +1,1 @@
-web: gunicorn dbdb_todo:app
+web: gunicorn -w 1 dbdb_todo:app
