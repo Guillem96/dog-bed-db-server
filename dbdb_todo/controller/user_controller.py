@@ -24,13 +24,15 @@ class UserController(object):
                 if body["username"] in self.database:
                     return Response('{ "msg": "The username ' + body["username"] + ' already exists" }', status=400)
 
-                new_user = User(body["username"],
-                                body["password"], body.get("email", ""))
+                new_user = User(body["first_name"], body["last_name"],
+                                body["username"], body["password"],
+                                body.get("email", ""))
                 self.database[new_user.username] = new_user.to_json()
                 self.database.commit()
-                return Response(self.database[new_user.username], status=201)
+                print new_user.to_json()
+                return Response(new_user.to_json(), status=201)
             except KeyError:
-                return Response(status=400)
+                return Response('{ "msg": "Missing properties" }', status=400)
             except (UnicodeDecodeError, ValueError):
                 return Response('{ "msg": "Json body is incorrect" }', status=400)
 
@@ -45,7 +47,7 @@ class UserController(object):
                     return Response(status=200)
 
             except KeyError:
-                return Response(status=403)
+                return Response("{ 'msg': 'Missing properties' }", status=403)
             except UnicodeDecodeError:
                 return Response('{ "msg": "Json body is required" }', status=400)
 
@@ -73,27 +75,11 @@ class UserController(object):
         except KeyError as err:
             return Response("{ 'msg': '" + str(err) + "'}", status=404)
 
-    def get_tasks(self, request):
-        try:
-            username = request.authorization.get("username")
-            data = json.loads(self.database[username])
-            tasks = [t for t in data["tasks"]]
-            return Response(tasks, 200)
-
-        except KeyError:
-            return Response(status=404)
-
     def add_task(self, request):
         username = request.authorization.get("username")
         if request.data:
             try:
-                body = json.loads(request.data)
-                new_task = Task(
-                    body["name"], body["description"], body["date_limit"])
-                user = User.from_json(self.database[username])
-                user.add_task(new_task)
-                self.save(user)
-                return Response(user.to_json(), 201)
+                return Response(self._add_task(username, json.loads(request.data)).to_json(), 201)
             except KeyError:
                 return Response('{ "msg": "Properties missing" }', status=400)
             except UnicodeDecodeError:
@@ -106,9 +92,38 @@ class UserController(object):
         if not username:
             return Response(status=403)
         try:
-            user = User.from_json(self.database[username])
-            user.delete_task(index)
-            self.save(user)
+            return Response(self._delete_task(username, index).to_json(), 200)
+        except KeyError:
+            return Response('{ "msg": "User not found" }', status=400)
+
+    def update_task(self, request, index):
+        username = request.authorization.get("username")
+        if not username:
+            return Response(status=403)
+        try:
+            user = self._delete_task(username, index)
+            user = self._add_task(username, json.loads(request.data), index)
+            if not user:
+                return Response("{ 'msg': 'Invalid index' }", 400)
             return Response(user.to_json(), 200)
         except KeyError:
             return Response('{ "msg": "User not found" }', status=400)
+
+    def _add_task(self, username, task, index=-1):
+        new_task = Task(task["name"], task["description"], task["date_limit"])
+        user = User.from_json(self.database[username])
+        if index < 0:
+            user.add_task(new_task)
+        elif index <= len(user.tasks):
+            user.tasks[index] = new_task
+        else:
+            return None
+
+        self.save(user)
+        return user
+
+    def _delete_task(self, username, index):
+        user = User.from_json(self.database[username])
+        user.delete_task(index)
+        self.save(user)
+        return user
