@@ -81,6 +81,14 @@ class TaskManager(object):
         headers = self._auth.get_basic_auth(username, password)
         return self._client.delete("/tasks/" + str(task_idx), headers=headers)
 
+    def update_task(self, username, password, task, task_idx):
+        task = json.dumps(task)
+
+        headers = self._auth.get_basic_auth(username, password)
+        headers["Content-Type"] = "application/json"
+
+        return self._client.put("/tasks/" + str(task_idx), data=task, headers=headers)
+
 
 @pytest.fixture
 def task_manager(client, auth):

@@ -46,10 +46,10 @@ def create_app(test_config=None):
     def get_user_info():
         return user_ctrl.get(request)
 
-    @app.route("/tasks", methods=["GET"])
+    @app.route("/tasks/<int:index>", methods=["PUT"])
     @auth.login_required
-    def get_user_taks():
-        return user_ctrl.get_tasks(request)
+    def get_user_taks(index):
+        return user_ctrl.update_task(request, index)
 
     @app.route("/tasks", methods=["POST"])
     @auth.login_required

@@ -110,3 +110,25 @@ def test_concurrent_users(auth, task_manager):
     res_data = json.loads(res.data)
     assert len(res_data["tasks"]) == 2
     assert res_data["tasks"][0]["name"] == another_task["name"]
+
+
+def test_update_task(auth, task_manager):
+    res = auth.sign_up("Guillem", "Orellana", "guillem",
+                       "pw", "guillem@email.com")
+    assert res.status_code == 201
+
+    res = task_manager.add_task("guillem", "pw", new_task)
+    assert res.status_code == 201
+
+    res = task_manager.add_task("guillem", "pw", another_task)
+    assert res.status_code == 201
+
+    res_data = json.loads(res.data)
+    task = res_data["tasks"][0]
+    task["done"] = True
+
+    res = task_manager.update_task("guillem", "pw", task, 0)
+    assert res.status_code == 200
+
+    res_data = json.loads(res.data)
+    assert res_data["tasks"][0]["done"] == True
