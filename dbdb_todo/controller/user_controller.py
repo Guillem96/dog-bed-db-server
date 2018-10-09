@@ -57,19 +57,12 @@ class UserController(object):
         self.database.commit()
 
     def get_password(self, username):
-        try:
-            return json.loads(self.database[username])["password"]
-        except KeyError:
-            return None
+        return json.loads(self.database[username])["password"]
 
     def get(self, request):
-        try:
-            username = request.authorization.get("username")
-            data = self.database[username]
-            return Response(data, 200)
-
-        except KeyError as err:
-            return Response("{ 'msg': '" + str(err) + "'}", status=404)
+        username = request.authorization.get("username")
+        data = self.database[username]
+        return Response(data, 200)
 
     def add_task(self, request):
         username = request.authorization.get("username")
