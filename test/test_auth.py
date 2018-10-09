@@ -44,7 +44,6 @@ def test_login(auth):
     res_data = json.loads(res.data)
     assert res_data["email"] == "guillem@email.com"
     assert res_data["username"] == "guillem"
-    assert "password" not in res_data
 
     # Non existent user identity
     res = auth.identity("non_existent", "pw")

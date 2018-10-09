@@ -66,9 +66,6 @@ class UserController(object):
         try:
             username = request.authorization.get("username")
             data = self.database[username]
-            data = json.loads(data)
-            del data["password"]
-            data = json.dumps(data)
             return Response(data, 200)
 
         except KeyError as err:
