@@ -4,10 +4,11 @@ import hashlib
 
 
 class Task(JsonObject):
-    def __init__(self, name, description, date_limit, tags=[]):
+    def __init__(self, name, description, date_limit, done="false", tags=[]):
         self.name = name
         self.description = description
         self.date_limit = date_limit
+        self.done = done
         self.tags = tags
 
     @classmethod
@@ -18,4 +19,5 @@ class Task(JsonObject):
         return cls(data["name"],
                    data["description"],
                    data["date_limit"],
+                   data.get("done", "false"),
                    data["tags"])

@@ -111,7 +111,7 @@ class UserController(object):
 
     def _add_task(self, username, task, index=-1):
         new_task = Task(task["name"], task["description"],
-                        task["date_limit"], task["tags"])
+                        task["date_limit"], "false", task["tags"])
         user = User.from_json(self.database[username])
         if index < 0:
             user.add_task(new_task)
